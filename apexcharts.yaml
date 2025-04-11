@@ -48,8 +48,8 @@ series:
         else if (value >= 1.00) { return '#ef4444' } // Red
         else if (value >= 0.50) { return '#f59e0b' } // Orange
         else if (value >= 0.20) { return '#fcd34d' } // Yellow
-        else if (value >= 0.00) { return '#16a34a' } // Yellow
-        else { return '#0096FF' } // Green
+        else if (value >= 0.00) { return '#16a34a' } // Green
+        else { return '#0096FF' } // Blue
       }
 
 
