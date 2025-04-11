@@ -17,7 +17,7 @@ now:
   show: true
   label: Nu
 header:
-  title: El-priser pr. time (DKK/kWh)
+  title: Salgs El-priser pr. time (ex moms DKK/kWh)
   show: true
   show_states: true
   colorize_states: true
