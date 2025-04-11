@@ -1,0 +1,2 @@
+{% from 'cheapest_energy_hours.jinja' import cheapest_energy_hours %}
+{{ cheapest_energy_hours(sensor='sensor.nordpool', datetime_in_data=true, attr_today='raw_today', attr_tomorrow='raw_tomorrow', hours=1, include_tomorrow=true, look_ahead=true, lowest=true, mode='min', start=today_at('00:00') + timedelta(days=1)) }}
