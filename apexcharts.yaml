@@ -1,0 +1,186 @@
+type: custom:apexcharts-card
+update_interval: 15s
+apex_config:
+  chart:
+    height: 350px
+  xaxis:
+    type: datetime
+    labels:
+      datetimeFormatter:
+        hour: HH:mm
+    tickPlacement: between
+graph_span: 48h
+span:
+  start: hour
+  offset: "-2h"
+now:
+  show: true
+  label: Nu
+header:
+  title: El-priser pr. time (DKK/kWh)
+  show: true
+  show_states: true
+  colorize_states: true
+yaxis:
+  - min: -1
+    max: 3
+    decimals: 2
+    apex_config:
+      tickAmount: 4
+series:
+  - entity: sensor.nordpool
+    name: Lige nu
+    type: column
+    show:
+      in_header: raw
+      in_chart: true
+    float_precision: 3
+    unit: " kr."
+    data_generator: >
+      /**
+        * Get HEX color of data point based on value.
+        *
+        * @param value { float }
+        * @returns { string }
+        */
+      var colorByValue = function (value) {
+        if (value >= 2.0) { return '#7f1d1d'; } // Dark red
+        else if (value >= 1.00) { return '#ef4444' } // Red
+        else if (value >= 0.50) { return '#f59e0b' } // Orange
+        else if (value >= 0.20) { return '#fcd34d' } // Yellow
+        else { return '#16a34a' } // Green
+      }
+
+
+      /**
+        * Build data point object.
+        *
+        * @param item { object }
+        * @param isForecast { boolean }
+        * @returns { object }
+        */
+      var buildDataPoint = function (item, isForecast = false) {
+        return {
+          x: new Date(item['start']).getTime(),
+          y: item['value'],
+          fillColor: isForecast ? '#a1a1aa' : colorByValue(item['value'])
+        }
+      }
+
+
+      // Expected data points.
+
+      // Has to equal the value set in "group_span" but as hours.
+
+      // Which means, if you ie. have set "1d" as group span, you should set
+      this to 24.
+
+      var expectedDataPoints = 48;
+
+
+      // Data points
+
+      var data = [];
+
+
+      // No prices available.
+
+      // Return empty dataset.
+
+      if (!entity.attributes.raw_today) {
+        return data;
+      }
+
+
+      // Offset of hours set in "span" option.
+
+      // Note: Only set this, if offset is negative.
+
+      var offsetHours = 2;
+
+
+      // Get current timestamp (incl. offset).
+
+      var currentTime = new Date().getTime() - (3600000 * offsetHours);
+
+
+      // Loop through all today's hours and collect prices,
+
+      // but discard hours which have already passed.
+
+      entity.attributes.raw_today.filter(item => new
+      Date(item['start']).getTime() > currentTime).forEach(item => {
+        data.push(buildDataPoint(item));
+      });
+
+
+      // If tomorrow prices is available,
+
+      // we'll add those to our dataset.
+
+      if (entity.attributes.tomorrow_valid) {
+        entity.attributes.raw_tomorrow.forEach(item => {
+          data.push(buildDataPoint(item));
+        });
+      }
+
+
+      // Determine if we could use a few forecasted today points
+
+      // to forfill our expected data points.
+
+      var forecastValuesNeeded = expectedDataPoints - data.length;
+
+
+      // If forecast values are needed and they are available,
+
+      // add forecast data points to our data set,
+
+      // until our expected data points has been reached.
+
+      if (forecastValuesNeeded > 0 && entity.attributes.forecast) {
+        var lastKnownDatapointTimestamp = data[data.length - 1]['x'];
+        entity.attributes.forecast.filter(item => new Date(item['start']).getTime() > lastKnownDatapointTimestamp).slice(0, forecastValuesNeeded).forEach(item => {
+          data.push(buildDataPoint(item, true));
+        });
+      }
+
+
+      return data;
+  - entity: sensor.nordpool
+    name: Lavest i dag
+    attribute: min
+    transform: |
+      return entity.attributes.min ?? null
+    float_precision: 3
+    unit: " kr."
+    show:
+      in_chart: false
+  - entity: sensor.nordpool
+    name: Højest i dag
+    attribute: max
+    transform: |
+      return entity.attributes.max ?? null
+    float_precision: 3
+    unit: " kr."
+    show:
+      in_chart: false
+  - entity: sensor.nordpool
+    name: Gns. i dag
+    attribute: mean
+    float_precision: 3
+    unit: " kr."
+    show:
+      in_chart: false
+  - entity: sensor.nordpool_tomorrow_min
+    name: Lavest i morgen
+    float_precision: 3
+    unit: " kr."
+    show:
+      in_chart: false
+  - entity: sensor.nordpool_tomorrow_max
+    name: Højest i morgen
+    float_precision: 3
+    unit: " kr."
+    show:
+      in_chart: false
