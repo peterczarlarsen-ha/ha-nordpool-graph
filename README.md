@@ -3,7 +3,7 @@ Nordpool DK2 setup and graph for sale of DK2 power
 
 For my solar setup, I have a raw nordpool price and graph available 
 
-<img width="502" alt="Screenshot 2025-04-11 at 17 27 00" src="https://github.com/user-attachments/assets/f6f80bde-2de2-409e-b03c-b41322d3d626" />
+<img width="485" alt="Screenshot 2025-04-11 at 17 52 40" src="https://github.com/user-attachments/assets/193d388e-5705-46a0-b1df-9c32c4d656f7" />
 
 1) Install ApexCard, Nordpool, cheapest-energy-hours and HACS if needed, https://github.com/RomRider/apexcharts-card && http://hacs.xyz && https://github.com/custom-components/nordpool && https://github.com/TheFes/cheapest-energy-hours
 2) 
