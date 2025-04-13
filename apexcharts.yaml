@@ -175,13 +175,18 @@ series:
       in_chart: false
   - entity: sensor.nordpool_tomorrow_min
     name: Lavest i morgen
+    transform: |
+      return entity.attributes.nordpool_tomorrow_min ?? null
     float_precision: 3
     unit: " kr."
     show:
       in_chart: false
   - entity: sensor.nordpool_tomorrow_max
     name: Højest i morgen
+    transform: |
+      return entity.attributes.nordpool_tomorrow_max ?? null
     float_precision: 3
     unit: " kr."
     show:
       in_chart: false
+
